@@ -1,0 +1,36 @@
+﻿@model IEnumerable<CMS.Data.Entities.CategoryProduct>
+
+@{
+    ViewData["Title"] = "Phân loại Sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-uppercase mb-0 text-success">Danh sách Phân loại Sản phẩm</h3>
+        <button class="btn btn-primary">+ Gán sản phẩm vào danh mục</button>
+    </div>
+
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered table-hover align-middle text-center mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã Danh Mục (CategoryId)</th>
+                    <th>Mã Sản Phẩm (ProductId)</th>
+                    <th>Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold text-primary">@item.CategoryId</td>
+                        <td class="fw-bold text-danger">@item.ProductId</td>
+                        <td>
+                            <button class="btn btn-outline-danger btn-sm">Gỡ bỏ</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

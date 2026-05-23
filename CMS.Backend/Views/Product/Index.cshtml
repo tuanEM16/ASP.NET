@@ -1,0 +1,56 @@
+﻿@model IEnumerable<CMS.Data.Entities.Product>
+
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-uppercase mb-0 text-primary">Danh sách Sản phẩm</h3>
+        <button class="btn btn-success">+ Thêm sản phẩm mới</button>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning text-center shadow-sm" role="alert">
+            <strong>Hiện tại chưa có sản phẩm nào!</strong> Hãy thêm dữ liệu vào Database để hiển thị.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm">
+            <table class="table table-bordered table-hover align-middle mb-0 bg-white">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th>ID</th>
+                        <th>Hình ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá</th>
+                        <th>Mô tả</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center fw-bold">@item.Id</td>
+                            <td class="text-center">
+                                <img src="@item.ImageUrl" alt="Hình ảnh" style="width: 80px; height: 80px; object-fit: cover;" class="rounded border" />
+                            </td>
+                            <td class="fw-bold text-primary">@item.Name</td>
+                            <td class="text-danger fw-bold text-end">@string.Format("{0:N0} đ", item.Price)</td>
+                            <td>
+                                @(item.Description != null && item.Description.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description)
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-outline-warning btn-sm mb-1 w-100">Sửa</button>
+                                <button class="btn btn-outline-danger btn-sm w-100">Xóa</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
