@@ -1,0 +1,66 @@
+﻿@{
+    Layout = null; // Tắt Layout Admin mặc định
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập hệ thống - ThaiCMS</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .login-card {
+            margin-top: 10vh;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="card shadow-lg login-card">
+                    <div class="card-header bg-dark text-white text-center py-3">
+                        <h4 class="mb-0 fw-bold">ĐĂNG NHẬP</h4>
+                    </div>
+                    <div class="card-body p-4">
+
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger text-center">
+                                @ViewBag.Error
+                            </div>
+                        }
+
+                        <form asp-action="Login" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tên đăng nhập:</label>
+                                <input type="text" name="username" class="form-control" placeholder="Nhập username..." required />
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Mật khẩu:</label>
+                                <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu..." required />
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary fw-bold py-2">
+                                    Đăng nhập
+                                </button>
+                                <a href="/" class="btn btn-outline-secondary">Quay về trang chủ</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

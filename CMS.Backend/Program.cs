@@ -1,15 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CMS.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
 // Đăng ký DbContext vào hệ thống
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly("CMS.Data")));
-var app = builder.Build();
 
+// Đăng ký dịch vụ xác thực bằng Cookie
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Auth/Login"; // Đường dẫn bị đẩy về nếu chưa đăng nhập
+        options.AccessDeniedPath = "/Auth/AccessDenied"; // Đường dẫn khi không đủ quyền hạn
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Thời gian sống của phiên đăng nhập
+    });
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -23,8 +39,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseAuthorization();
+app.UseAuthentication(); // BẮT BUỘC ĐỨNG TRƯỚC UseAuthorization (Xác thực xem là ai)
+app.UseAuthorization();  // (Kiểm tra xem có quyền gì)
 
 app.MapControllerRoute(
     name: "default",
