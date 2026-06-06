@@ -24,7 +24,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.HttpOnly = true;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Thời gian sống của phiên đăng nhập
     });
-
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll", policy => {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+// Đăng ký Swagger generator
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,9 +45,21 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// Cấu hình HTTP request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        // Tùy chọn: giúp Swagger tự mở khi chạy dự án
+        c.RoutePrefix = "swagger";
+    });
+}
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCors("AllowAll");
 app.UseAuthentication(); // BẮT BUỘC ĐỨNG TRƯỚC UseAuthorization (Xác thực xem là ai)
 app.UseAuthorization();  // (Kiểm tra xem có quyền gì)
 

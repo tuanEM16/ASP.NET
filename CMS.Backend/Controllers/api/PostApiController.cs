@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMS.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CMS.Backend.Controllers.api
@@ -20,7 +21,30 @@ namespace CMS.Backend.Controllers.api
         public async Task<IActionResult> GetAllPosts()
         {
             var posts = await _context.Posts
-                .Include(p => p.Category)
+                .OrderByDescending(p => p.Id)
+                .Select(p => new {
+                    p.Id,
+                    p.Title,
+                    p.ImageUrl,
+                    p.CreatedDate,
+                    CategoryName = p.Category.Name
+                })
+                .ToListAsync();
+
+            return Ok(posts);
+        }
+
+        [HttpGet("category/{categoryId}")]
+        public async Task<IActionResult> GetByCategory(int categoryId)
+        {
+            var posts = await _context.Posts
+                .Where(p => p.CategoryId == categoryId)
+                .Select(p => new {
+                    p.Id,
+                    p.Title,
+                    p.ImageUrl,
+                    p.CreatedDate
+                })
                 .ToListAsync();
 
             return Ok(posts);
@@ -30,12 +54,11 @@ namespace CMS.Backend.Controllers.api
         public async Task<IActionResult> GetPostById(int id)
         {
             var post = await _context.Posts
-                .Include(p => p.Category)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (post == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Không tìm thấy bài viết này trong hệ thống" });
             }
 
             return Ok(post);
