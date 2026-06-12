@@ -1,0 +1,44 @@
+@model CMS.Data.Entities.Product
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    var categoryName = ViewBag.CategoryProductName as string;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-primary mb-0">Chi tiết sản phẩm</h3>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Sửa</a>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded border" />
+                }
+                else
+                {
+                    <div class="border rounded p-5 text-muted">Chưa có ảnh</div>
+                }
+            </div>
+            <div class="col-md-8">
+                <h4 class="fw-bold">@Model.Name</h4>
+                <p class="text-muted">@Model.Description</p>
+                <dl class="row">
+                    <dt class="col-sm-4">Danh mục</dt>
+                    <dd class="col-sm-8">@(categoryName ?? "Chưa phân loại")</dd>
+                    <dt class="col-sm-4">Giá bán</dt>
+                    <dd class="col-sm-8 text-danger fw-bold">@string.Format("{0:N0} đ", Model.Price)</dd>
+                    <dt class="col-sm-4">Tồn kho</dt>
+                    <dd class="col-sm-8">@Model.StockQuantity sản phẩm</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

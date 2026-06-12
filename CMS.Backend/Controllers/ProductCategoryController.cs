@@ -5,23 +5,23 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Backend.Controllers
 {
-    public class CustomerController : Controller
+    public class ProductCategoryController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CustomerController(ApplicationDbContext context)
+        public ProductCategoryController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         public IActionResult Index()
         {
-            var customers = _context.Customers
-                .Include(c => c.Orders)
-                .OrderByDescending(c => c.Id)
+            var items = _context.CategoriesProducts
+                .Include(x => x.Products)
+                .OrderBy(x => x.Name)
                 .ToList();
 
-            return View(customers);
+            return View(items);
         }
 
         [HttpGet]
@@ -32,66 +32,72 @@ namespace CMS.Backend.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Customer model)
+        public IActionResult Create(CategoryProduct model)
         {
+            model.CategoryId = 0;
+            model.ProductId = 0;
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            _context.Customers.Add(model);
+            _context.CategoriesProducts.Add(model);
             _context.SaveChanges();
-            TempData["Success"] = "Đã thêm khách hàng.";
+            TempData["Success"] = "Đã thêm danh mục sản phẩm.";
             return RedirectToAction("Index");
         }
 
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var customer = _context.Customers.Find(id);
-            if (customer == null)
+            var item = _context.CategoriesProducts.Find(id);
+            if (item == null)
             {
                 return NotFound();
             }
 
-            return View(customer);
+            return View(item);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Customer model)
+        public IActionResult Edit(CategoryProduct model)
         {
+            model.CategoryId = 0;
+            model.ProductId = 0;
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            _context.Customers.Update(model);
+            _context.CategoriesProducts.Update(model);
             _context.SaveChanges();
-            TempData["Success"] = "Đã cập nhật khách hàng.";
+            TempData["Success"] = "Đã cập nhật danh mục sản phẩm.";
             return RedirectToAction("Index");
         }
 
         public IActionResult Delete(int id)
         {
-            var customer = _context.Customers
-                .Include(c => c.Orders)
-                .FirstOrDefault(c => c.Id == id);
+            var item = _context.CategoriesProducts
+                .Include(x => x.Products)
+                .FirstOrDefault(x => x.Id == id);
 
-            if (customer == null)
+            if (item == null)
             {
                 return NotFound();
             }
 
-            if (customer.Orders != null && customer.Orders.Any())
+            if (item.Products != null && item.Products.Any())
             {
-                TempData["Error"] = "Không thể xóa khách hàng đã có đơn hàng.";
+                TempData["Error"] = "Không thể xóa danh mục đang có sản phẩm.";
                 return RedirectToAction("Index");
             }
 
-            _context.Customers.Remove(customer);
+            _context.CategoriesProducts.Remove(item);
             _context.SaveChanges();
-            TempData["Success"] = "Đã xóa khách hàng.";
+            TempData["Success"] = "Đã xóa danh mục sản phẩm.";
             return RedirectToAction("Index");
         }
     }

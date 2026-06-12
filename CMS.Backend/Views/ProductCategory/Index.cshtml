@@ -1,17 +1,17 @@
-@model IEnumerable<CMS.Data.Entities.Customer>
+@model IEnumerable<CMS.Data.Entities.CategoryProduct>
 
 @{
     Layout = "_LayoutAdmin";
-    ViewData["Title"] = "Quản lý Khách hàng";
+    ViewData["Title"] = "Danh mục sản phẩm";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h3 class="text-uppercase mb-1 text-primary">Danh sách khách hàng</h3>
-        <p class="text-muted mb-0">Quản lý thông tin người mua và liên hệ.</p>
+        <h3 class="text-uppercase text-primary mb-1">Danh mục sản phẩm</h3>
+        <p class="text-muted mb-0">Quản lý nhóm sản phẩm như váy, áo, phụ kiện...</p>
     </div>
     <a asp-action="Create" class="btn btn-success">
-        <i class="bi bi-person-plus"></i> Thêm khách hàng
+        <i class="bi bi-plus-circle"></i> Thêm danh mục
     </a>
 </div>
 
@@ -26,9 +26,7 @@
 
 @if (!Model.Any())
 {
-    <div class="alert alert-warning text-center shadow-sm">
-        <strong>Chưa có dữ liệu khách hàng!</strong>
-    </div>
+    <div class="alert alert-warning text-center shadow-sm">Chưa có danh mục sản phẩm nào.</div>
 }
 else
 {
@@ -36,13 +34,11 @@ else
         <table class="table table-bordered table-hover align-middle mb-0 bg-white">
             <thead class="table-light text-center">
                 <tr>
-                    <th>ID</th>
-                    <th>Họ và Tên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Địa chỉ</th>
-                    <th>Số đơn</th>
-                    <th style="width:160px">Thao tác</th>
+                    <th style="width:80px">ID</th>
+                    <th>Tên danh mục</th>
+                    <th>Mô tả</th>
+                    <th style="width:140px">Số sản phẩm</th>
+                    <th style="width:180px">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,16 +46,14 @@ else
                 {
                     <tr>
                         <td class="text-center fw-bold">@item.Id</td>
-                        <td class="fw-bold">@item.FullName</td>
-                        <td>@item.Email</td>
-                        <td class="text-center">@item.Phone</td>
-                        <td>@item.Address</td>
-                        <td class="text-center">@(item.Orders?.Count ?? 0)</td>
+                        <td class="fw-bold text-primary">@item.Name</td>
+                        <td>@(string.IsNullOrWhiteSpace(item.Description) ? "Chưa có mô tả" : item.Description)</td>
+                        <td class="text-center">@(item.Products?.Count ?? 0)</td>
                         <td class="text-center">
                             <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-warning btn-sm">Sửa</a>
                             <a asp-action="Delete" asp-route-id="@item.Id"
                                class="btn btn-outline-danger btn-sm"
-                               onclick="return confirm('Bạn có chắc muốn xóa khách hàng này?')">Xóa</a>
+                               onclick="return confirm('Bạn có chắc muốn xóa danh mục này?')">Xóa</a>
                         </td>
                     </tr>
                 }
