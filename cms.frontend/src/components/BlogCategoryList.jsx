@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import categoryProductService from '../services/categoryProductService';
+import React, { useEffect, useState } from 'react';
+import blogService from '../services/blogService';
 
-const CategoryProductList = ({ selectedCategoryId, onSelectCategory }) => {
-    const [categoryProducts, setCategoryProducts] = useState([]);
+const BlogCategoryList = ({ selectedCategoryId, onSelectCategory }) => {
+    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchCategories = async () => {
             try {
                 setLoading(true);
-                const data = await categoryProductService.getAllCategoryProducts();
-                setCategoryProducts(data);
+                const data = await blogService.getBlogCategories();
+                setCategories(data);
             } catch (error) {
-                console.error("Lỗi tải danh mục sản phẩm:", error);
+                console.error('Lỗi tải danh mục bài viết:', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchData();
+
+        fetchCategories();
     }, []);
 
     if (loading) {
-        return <div className="text-center my-4">Đang tải danh mục sản phẩm...</div>;
+        return <div className="text-center my-4">Đang tải danh mục bài viết...</div>;
     }
 
     return (
@@ -31,13 +32,13 @@ const CategoryProductList = ({ selectedCategoryId, onSelectCategory }) => {
                 className={`category-chip ${selectedCategoryId === null ? 'active' : ''}`}
                 onClick={() => onSelectCategory(null)}
             >
-                Tất cả sản phẩm
+                Tất cả bài viết
             </button>
 
-            {categoryProducts.length === 0 ? (
-                <span className="text-muted small">Chưa có danh mục sản phẩm.</span>
+            {categories.length === 0 ? (
+                <span className="text-muted small">Chưa có danh mục bài viết.</span>
             ) : (
-                categoryProducts.map((item) => (
+                categories.map((item) => (
                     <button
                         key={item.id}
                         type="button"
@@ -52,4 +53,4 @@ const CategoryProductList = ({ selectedCategoryId, onSelectCategory }) => {
     );
 };
 
-export default CategoryProductList;   // 👈 DÒNG NÀY RẤT QUAN TRỌNG
+export default BlogCategoryList;

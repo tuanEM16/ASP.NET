@@ -25,6 +25,7 @@ namespace CMS.Backend.Controllers.api
                 .Select(p => new {
                     p.Id,
                     p.Title,
+                    p.Content,
                     p.ImageUrl,
                     p.CreatedDate,
                     CategoryName = p.Category.Name
@@ -42,6 +43,7 @@ namespace CMS.Backend.Controllers.api
                 .Select(p => new {
                     p.Id,
                     p.Title,
+                    p.Content,
                     p.ImageUrl,
                     p.CreatedDate
                 })
