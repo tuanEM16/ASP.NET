@@ -1,25 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import categoryProductService from '../services/categoryProductService';
+import React from 'react';
 
-const CategoryProductList = ({ selectedCategoryId, onSelectCategory }) => {
-    const [categoryProducts, setCategoryProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const data = await categoryProductService.getAllCategoryProducts();
-                setCategoryProducts(data);
-            } catch (error) {
-                console.error("Lỗi tải danh mục sản phẩm:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
-
+const CategoryProductList = ({ categories = [], loading, selectedCategoryId, onSelectCategory }) => {
     if (loading) {
         return <div className="text-center my-4">Đang tải danh mục sản phẩm...</div>;
     }
@@ -34,10 +15,10 @@ const CategoryProductList = ({ selectedCategoryId, onSelectCategory }) => {
                 Tất cả sản phẩm
             </button>
 
-            {categoryProducts.length === 0 ? (
+            {categories.length === 0 ? (
                 <span className="text-muted small">Chưa có danh mục sản phẩm.</span>
             ) : (
-                categoryProducts.map((item) => (
+                categories.map((item) => (
                     <button
                         key={item.id}
                         type="button"
@@ -52,4 +33,4 @@ const CategoryProductList = ({ selectedCategoryId, onSelectCategory }) => {
     );
 };
 
-export default CategoryProductList;   // 👈 DÒNG NÀY RẤT QUAN TRỌNG
+export default CategoryProductList;

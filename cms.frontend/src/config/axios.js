@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+export const API_BASE_URL = 'https://localhost:7098/api';
+
 const axiosClient = axios.create({
-    baseURL: 'https://localhost:7098/api',   // 👈 THAY SỐ CỔNG CHO ĐÚNG VỚI BACKEND CỦA BẠN
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },

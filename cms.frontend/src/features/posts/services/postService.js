@@ -1,6 +1,6 @@
-import axiosClient from '../api/axiosClient';
+import axiosClient from '../../../config/axios';
 
-const blogService = {
+const postService = {
     getBlogCategories: () => {
         const url = '/CategoryApi';
         return axiosClient.get(url);
@@ -14,7 +14,12 @@ const blogService = {
     getPostsByCategory: (categoryId) => {
         const url = `/PostApi/category/${categoryId}`;
         return axiosClient.get(url);
+    },
+
+    getPostById: (id) => {
+        const url = `/PostApi/${id}`;
+        return axiosClient.get(url);
     }
 };
 
-export default blogService;
+export default postService;

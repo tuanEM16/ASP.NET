@@ -1,26 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import blogService from '../services/blogService';
+import React from 'react';
 
-const BlogCategoryList = ({ selectedCategoryId, onSelectCategory }) => {
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                setLoading(true);
-                const data = await blogService.getBlogCategories();
-                setCategories(data);
-            } catch (error) {
-                console.error('Lỗi tải danh mục bài viết:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCategories();
-    }, []);
-
+const BlogCategoryList = ({ categories = [], loading, selectedCategoryId, onSelectCategory }) => {
     if (loading) {
         return <div className="text-center my-4">Đang tải danh mục bài viết...</div>;
     }
