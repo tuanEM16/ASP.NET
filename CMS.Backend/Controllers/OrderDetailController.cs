@@ -3,9 +3,11 @@ using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize]
     public class OrderDetailController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,7 +21,7 @@ namespace CMS.Backend.Controllers
         {
             var orderDetails = _context.OrderDetails
                 .Include(d => d.Order)
-                    .ThenInclude(o => o.Customer)
+                    .ThenInclude(o => o!.Customer)
                 .Include(d => d.Product)
                 .OrderByDescending(d => d.OrderId)
                 .ToList();

@@ -1,22 +1,23 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import App from './App';
 
-jest.mock('./features/products/services/productService', () => ({
+jest.mock('./services/productService', () => ({
   __esModule: true,
   default: {
     getAllProducts: jest.fn(() => Promise.resolve([])),
+    getLatestProducts: jest.fn(() => Promise.resolve([])),
     getProductById: jest.fn(() => Promise.resolve(null))
   }
 }));
 
-jest.mock('./features/products/services/categoryProductService', () => ({
+jest.mock('./services/categoryProductService', () => ({
   __esModule: true,
   default: {
     getAllCategoryProducts: jest.fn(() => Promise.resolve([]))
   }
 }));
 
-jest.mock('./features/posts/services/postService', () => ({
+jest.mock('./services/postService', () => ({
   __esModule: true,
   default: {
     getBlogCategories: jest.fn(() => Promise.resolve([])),
@@ -26,9 +27,9 @@ jest.mock('./features/posts/services/postService', () => ({
   }
 }));
 
-test('renders EmCMS Fashion home page', async () => {
+test('renders EyeStyle Store home page', async () => {
   render(<App />);
-  expect(screen.getAllByText(/EmCMS\.Fashion/i).length).toBeGreaterThan(0);
+  expect(screen.getAllByText(/EyeStyle\.Store/i).length).toBeGreaterThan(0);
 
   await waitFor(() => {
     expect(screen.queryByText(/Đang tải/i)).not.toBeInTheDocument();

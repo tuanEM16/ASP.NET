@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using CMS.Backend.Services;
 namespace CMS.Backend.Controllers
 {
     public class AuthController : Controller
@@ -27,10 +28,17 @@ namespace CMS.Backend.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
-            if (user != null)
+            if (user != null && PasswordHasher.VerifyPassword(password, user.PasswordHash))
             {
+                if (!PasswordHasher.IsHashed(user.PasswordHash))
+                {
+                    user.PasswordHash = PasswordHasher.HashPassword(password);
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                }
+
                 // 1. Tạo "Hồ sơ" chứa thông tin người dùng (Claims)
                 var claims = new List<Claim>
         {

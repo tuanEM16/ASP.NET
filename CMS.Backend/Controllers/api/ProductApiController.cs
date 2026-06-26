@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CMS.Data;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CMS.Backend.Controllers.Api
@@ -19,7 +21,23 @@ namespace CMS.Backend.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var items = await _context.Products.ToListAsync();
+            var items = await _context.Products
+                .OrderByDescending(p => p.Id)
+                .ToListAsync();
+
+            return Ok(items);
+        }
+
+        [HttpGet("latest")]
+        public async Task<IActionResult> GetLatest([FromQuery] int take = 3)
+        {
+            take = Math.Clamp(take, 1, 12);
+
+            var items = await _context.Products
+                .OrderByDescending(p => p.Id)
+                .Take(take)
+                .ToListAsync();
+
             return Ok(items);
         }
 

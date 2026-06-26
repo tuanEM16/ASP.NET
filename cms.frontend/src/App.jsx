@@ -1,15 +1,16 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/styles/app.css';
-import MainLayout from './layouts/MainLayout';
-import HomePage from './pages/Home';
-import ProductsPage from './pages/Products';
-import NewsPage from './pages/News';
-import ContactPage from './pages/Contact';
-import PostDetailPage from './pages/PostDetail';
-import ProductDetailPage from './pages/ProductDetail';
-import CartPage from './pages/Cart';
-import NotFound from './pages/NotFound';
+import MainLayout from './components/layout/MainLayout';
+import HomePage from './pages/home/page';
+import ProductPage from './pages/products/page';
+import NewsPage from './pages/news/page';
+import ContactPage from './pages/contact/page';
+import RegisterPage from './pages/register/page';
+import PostDetailPage from './pages/news/[id]/page';
+import ProductDetailPage from './pages/products/[id]/page';
+import CartPage from './pages/cart/page';
+import NotFoundPage from './pages/not-found/page';
 import { pageKeys } from './routes';
 import usePageNavigation from './hooks/usePageNavigation';
 import useCart from './hooks/useCart';
@@ -26,10 +27,6 @@ function App() {
         showPostDetail,
         showProductDetail
     } = usePageNavigation();
-
-    const showContact = () => {
-        goToPage(pageKeys.contact);
-    };
 
     const addProductToCart = (product) => {
         cart.addToCart(product);
@@ -53,7 +50,7 @@ function App() {
 
         if (currentPage === pageKeys.products) {
             return (
-                <ProductsPage
+                <ProductPage
                     selectedCategoryId={selectedProductCategoryId}
                     onSelectCategory={setSelectedProductCategoryId}
                     onViewProduct={showProductDetail}
@@ -76,12 +73,15 @@ function App() {
             return <ContactPage />;
         }
 
+        if (currentPage === pageKeys.register) {
+            return <RegisterPage />;
+        }
+
         if (currentPage === pageKeys.cart) {
             return (
                 <CartPage
                     cart={cart}
                     onNavigateProducts={() => goToPage(pageKeys.products)}
-                    onCheckout={showContact}
                 />
             );
         }
@@ -100,7 +100,7 @@ function App() {
             );
         }
 
-        return <NotFound onNavigateHome={() => goToPage(pageKeys.home)} />;
+        return <NotFoundPage onNavigateHome={() => goToPage(pageKeys.home)} />;
     };
 
     return (

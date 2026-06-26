@@ -62,9 +62,36 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
     <script>
-        // Kích hoạt trình soạn thảo cho thẻ textarea có id là 'Content'
+        class UploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file.then(file => {
+                    const data = new FormData();
+                    data.append('upload', file);
+
+                    return fetch('@Url.Action("UploadContentImage", "Post")', {
+                        method: 'POST',
+                        body: data
+                    })
+                        .then(response => response.json())
+                        .then(result => ({ default: result.url }));
+                });
+            }
+
+            abort() { }
+        }
+
+        function uploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = loader => new UploadAdapter(loader);
+        }
+
         ClassicEditor
-            .create(document.querySelector('#Content'))
+            .create(document.querySelector('#Content'), {
+                extraPlugins: [uploadAdapterPlugin]
+            })
             .catch(error => {
                 console.error(error);
             });

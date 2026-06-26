@@ -3,9 +3,11 @@ using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -15,14 +17,23 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
+            const int pageSize = 8;
+            page = Math.Max(page, 1);
+
+            var query = _context.Products.OrderByDescending(p => p.Id);
+            var totalItems = query.Count();
             var products = _context.Products
                 .OrderByDescending(p => p.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
 
             ViewBag.CategoryProductNames = _context.CategoriesProducts
                 .ToDictionary(x => x.Id, x => x.Name);
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
             return View(products);
         }

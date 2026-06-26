@@ -1,6 +1,9 @@
 ﻿@model IEnumerable<CMS.Data.Entities.Post>
 @{
     Layout = "_LayoutAdmin";
+    var currentPage = ViewBag.CurrentPage as int? ?? 1;
+    var totalPages = ViewBag.TotalPages as int? ?? 1;
+    var categoryId = ViewBag.CategoryId as int?;
 }
 
 <div class="container mt-4">
@@ -38,4 +41,17 @@
             </div>
         }
     </div>
+    @if (totalPages > 1)
+    {
+        <nav class="mt-3" aria-label="Phân trang bài viết">
+            <ul class="pagination justify-content-center">
+                @for (var i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-id="@categoryId" asp-route-page="@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
 </div>

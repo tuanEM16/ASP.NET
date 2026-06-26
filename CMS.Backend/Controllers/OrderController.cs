@@ -3,9 +3,11 @@ using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -82,7 +84,7 @@ namespace CMS.Backend.Controllers
         {
             var order = _context.Orders
                 .Include(o => o.Customer)
-                .Include(o => o.OrderDetails)
+                .Include(o => o.OrderDetails!)
                     .ThenInclude(d => d.Product)
                 .FirstOrDefault(o => o.Id == id);
 

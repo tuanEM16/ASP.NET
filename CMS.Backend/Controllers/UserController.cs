@@ -3,6 +3,8 @@ using CMS.Data.Entities;
 using CMS.Data;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using CMS.Backend.Services;
 namespace CMS.Backend.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -37,7 +39,7 @@ namespace CMS.Backend.Controllers
                 return View(model);
             }
 
-            // Lưu User mới vào Database
+            model.PasswordHash = PasswordHasher.HashPassword(model.PasswordHash);
             _context.Users.Add(model);
             _context.SaveChanges();
 
@@ -69,6 +71,16 @@ namespace CMS.Backend.Controllers
             {
                 ModelState.AddModelError("Username", "Tên đăng nhập này đã có người khác sử dụng!");
                 return View(model);
+            }
+
+            var oldUser = _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == model.Id);
+            if (oldUser != null && model.PasswordHash == oldUser.PasswordHash)
+            {
+                model.PasswordHash = oldUser.PasswordHash;
+            }
+            else if (!PasswordHasher.IsHashed(model.PasswordHash))
+            {
+                model.PasswordHash = PasswordHasher.HashPassword(model.PasswordHash);
             }
 
             _context.Users.Update(model);

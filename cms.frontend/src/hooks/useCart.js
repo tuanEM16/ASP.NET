@@ -10,13 +10,24 @@ const useCart = () => {
 
         setItems((currentItems) => {
             const existingItem = currentItems.find((item) => item.id === product.id);
+            const stockQuantity = Number(product.stockQuantity ?? existingItem?.stockQuantity ?? 0);
 
             if (existingItem) {
+                if (stockQuantity > 0 && existingItem.quantity >= stockQuantity) {
+                    window.alert('Số lượng sản phẩm trong kho không đủ!');
+                    return currentItems;
+                }
+
                 return currentItems.map((item) => (
                     item.id === product.id
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 ));
+            }
+
+            if (stockQuantity <= 0) {
+                window.alert('Số lượng sản phẩm trong kho không đủ!');
+                return currentItems;
             }
 
             return [...currentItems, { ...product, quantity: 1 }];

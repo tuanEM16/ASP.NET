@@ -18,26 +18,45 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index(int? id)
+        public IActionResult Index(int? id, int page = 1)
         {
+            const int pageSize = 6;
+            page = Math.Max(page, 1);
+
             if (id == null)
             {
                 // Khi truy cập /Post (không có id), lấy tất cả bài viết
-                var allPosts = _context.Posts
+                var query = _context.Posts
                     .Include(p => p.Category)
-                    .OrderByDescending(p => p.CreatedDate)
+                    .OrderByDescending(p => p.CreatedDate);
+
+                var totalItems = query.Count();
+                var allPosts = query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
                     .ToList();
 
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+                ViewBag.CategoryId = null;
                 return View(allPosts);
             }
 
             // Khi truy cập /Post/Index/5 (có id), lọc theo danh mục
-            var posts = _context.Posts
+            var filteredQuery = _context.Posts
                 .Where(p => p.CategoryId == id)
                 .OrderByDescending(p => p.CreatedDate)
-                .Include(p => p.Category)
+                .Include(p => p.Category);
+
+            var filteredTotalItems = filteredQuery.Count();
+            var posts = filteredQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
 
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(filteredTotalItems / (double)pageSize);
+            ViewBag.CategoryId = id;
             return View(posts);
         }
 
@@ -70,19 +89,7 @@ namespace CMS.Backend.Controllers
         {
             if (uploadImage != null && uploadImage.Length > 0)
             {
-                string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-
-                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadImage.FileName);
-                string filePath = Path.Combine(folder, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    uploadImage.CopyTo(stream);
-                }
-
-                model.ImageUrl = "/uploads/" + fileName;
+                model.ImageUrl = SaveUploadedImage(uploadImage);
             }
 
             _context.Posts.Add(model);
@@ -121,19 +128,7 @@ namespace CMS.Backend.Controllers
             // Bước 1: Kiểm tra xem người dùng có chọn file ảnh mới không
             if (uploadImage != null && uploadImage.Length > 0)
             {
-                string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadImage.FileName);
-                string filePath = Path.Combine(folder, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    uploadImage.CopyTo(stream);
-                }
-
-                // Cập nhật đường dẫn ảnh mới vào model
-                model.ImageUrl = "/uploads/" + fileName;
+                model.ImageUrl = SaveUploadedImage(uploadImage);
             }
             else
             {
@@ -148,6 +143,34 @@ namespace CMS.Backend.Controllers
             _context.Posts.Update(model);
             _context.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult UploadContentImage(IFormFile upload)
+        {
+            if (upload == null || upload.Length == 0)
+            {
+                return BadRequest(new { error = new { message = "Vui lòng chọn hình ảnh để tải lên." } });
+            }
+
+            var imageUrl = SaveUploadedImage(upload);
+            return Json(new { url = imageUrl });
+        }
+
+        private string SaveUploadedImage(IFormFile uploadImage)
+        {
+            string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadImage.FileName);
+            string filePath = Path.Combine(folder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                uploadImage.CopyTo(stream);
+            }
+
+            return "/uploads/" + fileName;
         }
     }
 }

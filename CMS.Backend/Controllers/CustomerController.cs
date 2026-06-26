@@ -2,9 +2,12 @@ using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using CMS.Backend.Services;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize]
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -39,6 +42,7 @@ namespace CMS.Backend.Controllers
                 return View(model);
             }
 
+            model.Password = PasswordHasher.HashPassword(model.Password);
             _context.Customers.Add(model);
             _context.SaveChanges();
             TempData["Success"] = "Đã thêm khách hàng.";
@@ -64,6 +68,16 @@ namespace CMS.Backend.Controllers
             if (!ModelState.IsValid)
             {
                 return View(model);
+            }
+
+            var oldCustomer = _context.Customers.AsNoTracking().FirstOrDefault(c => c.Id == model.Id);
+            if (oldCustomer != null && model.Password == oldCustomer.Password)
+            {
+                model.Password = oldCustomer.Password;
+            }
+            else if (!PasswordHasher.IsHashed(model.Password))
+            {
+                model.Password = PasswordHasher.HashPassword(model.Password);
             }
 
             _context.Customers.Update(model);

@@ -1,6 +1,6 @@
 export const brand = {
-    name: 'EmCMS',
-    suffix: '.Fashion',
-    email: 'contact@emcms.local',
-    phone: '0900 000 000'
+    name: 'EyeStyle',
+    suffix: '.Store',
+    email: 'contact@eyestyle.local',
+    phone: '0900 123 456'
 };

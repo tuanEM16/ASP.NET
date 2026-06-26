@@ -100,6 +100,17 @@ body {
     border-bottom: 1px solid #e4e9f1;
 }
 
+.hero-banner {
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(90deg, rgba(246, 248, 251, 0.98) 0%, rgba(246, 248, 251, 0.88) 45%, rgba(246, 248, 251, 0.3) 100%),
+        var(--hero-image),
+        linear-gradient(135deg, #eef5ff 0%, #ffffff 55%, #f0fbf7 100%);
+    background-position: center;
+    background-size: cover;
+}
+
 .hero-inner {
     min-height: 400px;
     display: flex;
@@ -132,11 +143,34 @@ body {
     font-size: 17px;
 }
 
+.hero-copy {
+    max-width: 720px;
+}
+
 .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 28px;
+}
+
+.hero-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: 26px;
+}
+
+.hero-dots button {
+    width: 34px;
+    height: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: #b7c4d5;
+}
+
+.hero-dots button.active {
+    background: #0b5ed7;
 }
 
 .page-section,
@@ -408,6 +442,21 @@ body {
 
 .cart-summary strong {
     color: #152232;
+}
+
+.checkout-form {
+    display: grid;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e1e8f2;
+}
+
+.checkout-form .form-label {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 0;
+    color: #334155;
+    font-weight: 800;
 }
 
 .detail-page {

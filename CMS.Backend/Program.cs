@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CMS.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using CMS.Backend.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -15,6 +16,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly("CMS.Data")));
 
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 // Đăng ký dịch vụ xác thực bằng Cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -25,8 +29,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Thời gian sống của phiên đăng nhập
     });
 builder.Services.AddCors(options => {
-    options.AddPolicy("AllowAll", policy => {
-        policy.AllowAnyOrigin()
+    options.AddPolicy("AllowReactApp", policy => {
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "https://localhost:3000")
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -59,9 +65,10 @@ if (app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseCors("AllowAll");
+app.UseCors("AllowReactApp");
 app.UseAuthentication(); // BẮT BUỘC ĐỨNG TRƯỚC UseAuthorization (Xác thực xem là ai)
 app.UseAuthorization();  // (Kiểm tra xem có quyền gì)
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

@@ -1,6 +1,4 @@
-import { API_BASE_URL } from '../config/axios';
-
-const backendUrl = API_BASE_URL.replace(/\/api\/?$/, '');
+import { IMAGE_BASE_URL } from '../services/api';
 
 export const getImageUrl = (imageUrl) => {
     if (!imageUrl) {
@@ -11,5 +9,5 @@ export const getImageUrl = (imageUrl) => {
         return imageUrl;
     }
 
-    return `${backendUrl}${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`;
+    return `${IMAGE_BASE_URL}${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`;
 };
