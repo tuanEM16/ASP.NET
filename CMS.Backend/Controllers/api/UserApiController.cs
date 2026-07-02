@@ -19,14 +19,35 @@ namespace CMS.Backend.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var items = await _context.Users.ToListAsync();
+            var items = await _context.Users
+                .AsNoTracking()
+                .Select(user => new
+                {
+                    user.Id,
+                    user.Username,
+                    user.FullName,
+                    user.Role
+                })
+                .ToListAsync();
+
             return Ok(items);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var item = await _context.Users.FindAsync(id);
+            var item = await _context.Users
+                .AsNoTracking()
+                .Where(user => user.Id == id)
+                .Select(user => new
+                {
+                    user.Id,
+                    user.Username,
+                    user.FullName,
+                    user.Role
+                })
+                .FirstOrDefaultAsync();
+
             if (item == null) return NotFound();
             return Ok(item);
         }

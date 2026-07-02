@@ -15,7 +15,7 @@ namespace CMS.Data.Entities
 
         [Required(ErrorMessage = "Tên danh mục không được để trống")]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int CategoryId { get; set; }
         public int ProductId { get; set; }
         public string? Description { get; set; }

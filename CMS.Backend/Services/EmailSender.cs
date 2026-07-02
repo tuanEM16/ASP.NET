@@ -55,6 +55,35 @@ namespace CMS.Backend.Services
             await client.SendMailAsync(message);
         }
 
+        public async Task SendPasswordResetAsync(Customer customer, string resetUrl)
+        {
+            var subject = "EyeStyle.Store - Dat lai mat khau";
+            var body = $@"
+                <h2>Dat lai mat khau EyeStyle.Store</h2>
+                <p>Xin chao {WebUtility.HtmlEncode(customer.FullName)},</p>
+                <p>Ban da yeu cau dat lai mat khau. Lien ket nay co hieu luc trong 30 phut.</p>
+                <p><a href=""{WebUtility.HtmlEncode(resetUrl)}"">Dat lai mat khau</a></p>
+                <p>Nếu bạn không thực hiện yêu cầu này, hãy bỏ qua email.</p>";
+
+            if (string.IsNullOrWhiteSpace(_settings.Host))
+            {
+                await SaveDevelopmentPasswordResetEmailAsync(customer.Email, subject, body);
+                return;
+            }
+
+            using var message = new MailMessage
+            {
+                From = new MailAddress(_settings.FromEmail, _settings.FromName),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+            message.To.Add(customer.Email);
+
+            using var client = CreateSmtpClient();
+            await client.SendMailAsync(message);
+        }
+
         private async Task SaveDevelopmentEmailAsync(int orderId, string toEmail, string subject, string body)
         {
             var folder = Path.Combine(_environment.WebRootPath, "order-emails");
@@ -68,6 +97,36 @@ namespace CMS.Backend.Services
                 .ToString();
 
             await File.WriteAllTextAsync(Path.Combine(folder, fileName), content, Encoding.UTF8);
+        }
+
+        private async Task SaveDevelopmentPasswordResetEmailAsync(string toEmail, string subject, string body)
+        {
+            var folder = Path.Combine(_environment.WebRootPath, "password-reset-emails");
+            Directory.CreateDirectory(folder);
+
+            var fileName = $"password-reset-{DateTime.Now:yyyyMMddHHmmssfff}.html";
+            var content = new StringBuilder()
+                .AppendLine($"<!-- To: {toEmail} -->")
+                .AppendLine($"<!-- Subject: {subject} -->")
+                .AppendLine(body)
+                .ToString();
+
+            await File.WriteAllTextAsync(Path.Combine(folder, fileName), content, Encoding.UTF8);
+        }
+
+        private SmtpClient CreateSmtpClient()
+        {
+            var client = new SmtpClient(_settings.Host, _settings.Port)
+            {
+                EnableSsl = _settings.EnableSsl
+            };
+
+            if (!string.IsNullOrWhiteSpace(_settings.UserName))
+            {
+                client.Credentials = new NetworkCredential(_settings.UserName, _settings.Password);
+            }
+
+            return client;
         }
 
         private static string BuildOrderEmail(Order order, Customer customer, IEnumerable<OrderDetail> details)

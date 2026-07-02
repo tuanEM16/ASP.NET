@@ -5,5 +5,6 @@ namespace CMS.Backend.Services
     public interface IEmailSender
     {
         Task SendOrderConfirmationAsync(Order order, Customer customer, IEnumerable<OrderDetail> details);
+        Task SendPasswordResetAsync(Customer customer, string resetUrl);
     }
 }

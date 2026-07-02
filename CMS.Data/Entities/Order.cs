@@ -17,6 +17,8 @@ namespace CMS.Data.Entities
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
         public int CustomerId { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
         public int Status { get; set; } // 0: Chờ duyệt, 1: Đang giao, 2: Đã xong
 

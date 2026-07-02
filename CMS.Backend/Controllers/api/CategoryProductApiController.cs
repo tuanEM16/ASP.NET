@@ -19,7 +19,22 @@ namespace CMS.Backend.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var items = await _context.CategoriesProducts.ToListAsync();
+            var items = await _context.CategoriesProducts
+                .AsNoTracking()
+                .Select(category => new
+                {
+                    category.Id,
+                    category.Name,
+                    category.Description,
+                    ImageUrl = category.Products!
+                        .OrderByDescending(product => product.Id)
+                        .Select(product => product.ImageUrl)
+                        .FirstOrDefault(),
+                    ProductCount = category.Products!.Count()
+                })
+                .OrderBy(category => category.Name)
+                .ToListAsync();
+
             return Ok(items);
         }
 

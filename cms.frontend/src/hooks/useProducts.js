@@ -2,14 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import productService from '../services/productService';
 import { toArray } from '../utils/arrays';
 
-const filterProducts = (products, categoryId) => {
-    if (!categoryId) {
-        return products;
-    }
-
-    return products.filter((item) => item.categoryProductId === categoryId);
-};
-
 const limitProducts = (products, limit) => {
     if (!limit) {
         return products;
@@ -18,35 +10,54 @@ const limitProducts = (products, limit) => {
     return products.slice(0, limit);
 };
 
-const useProducts = ({ categoryId = null, limit = null } = {}) => {
+const useProducts = ({
+    categoryId = null,
+    minPrice = '',
+    maxPrice = '',
+    keyword = '',
+    limit = null
+} = {}) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-                const data = await productService.getAllProducts();
+                setError('');
+
+                const hasFilter = categoryId || minPrice !== '' || maxPrice !== '';
+                const data = keyword && !hasFilter
+                    ? await productService.searchProducts(keyword)
+                    : await productService.filterProducts({
+                        categoryId,
+                        minPrice,
+                        maxPrice,
+                        keyword
+                    });
+
                 setProducts(toArray(data));
             } catch (error) {
                 console.error('Lỗi khi tải danh sách sản phẩm:', error);
                 setProducts([]);
+                setError(error?.response?.data?.message || 'Không thể tải danh sách sản phẩm.');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchProducts();
-    }, []);
+    }, [categoryId, keyword, maxPrice, minPrice]);
 
     const visibleProducts = useMemo(() => {
-        const filteredProducts = filterProducts(products, categoryId);
-        return limitProducts(filteredProducts, limit);
-    }, [categoryId, limit, products]);
+        return limitProducts(products, limit);
+    }, [limit, products]);
 
     return {
         products: visibleProducts,
-        loading
+        loading,
+        error
     };
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowRight, ShoppingBag } from 'lucide-react';
 import { getImageUrl } from '../../../utils/images';
 
 const buildSlides = ({ brand, products, posts }) => {
@@ -82,8 +83,10 @@ const HeroBanner = ({ brand, products = [], posts = [], onNavigate, onViewProduc
                     <div className="hero-actions">
                         <button type="button" className="btn btn-primary" onClick={handlePrimaryAction}>
                             {activeSlide.type === 'post' ? 'Đọc bài viết' : 'Xem chi tiết'}
+                            <ArrowRight size={18} />
                         </button>
                         <button type="button" className="btn btn-outline-dark" onClick={() => onNavigate('products')}>
+                            <ShoppingBag size={18} />
                             Xem tất cả sản phẩm
                         </button>
                     </div>

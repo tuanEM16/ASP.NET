@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowRight, CalendarDays, FileText } from 'lucide-react';
 import { formatDate } from '../../../utils/formatters';
 import { getImageUrl } from '../../../utils/images';
 import { createSummary } from '../../../utils/text';
@@ -17,7 +18,11 @@ const PostList = ({ posts = [], loading, heading = 'Xu hướng thời trang', i
             </div>
 
             {posts.length === 0 ? (
-                <p className="text-muted">Chưa có bài viết tin tức nào.</p>
+                <div className="empty-products">
+                    <FileText size={42} />
+                    <strong>Chưa có bài viết trong danh mục này</strong>
+                    <span>Hãy chọn danh mục khác để tiếp tục khám phá.</span>
+                </div>
             ) : (
                 <div className="row">
                     {posts.map((post) => {
@@ -34,12 +39,16 @@ const PostList = ({ posts = [], loading, heading = 'Xu hướng thời trang', i
                                         />
                                     )}
                                     <div className="post-body">
-                                        <span className="post-date">{formatDate(post.createdDate)}</span>
+                                        <span className="post-date">
+                                            <CalendarDays size={15} />
+                                            {formatDate(post.createdDate)}
+                                        </span>
                                         <h3>{post.title}</h3>
                                         <p>{createSummary(post.content, post.categoryName)}</p>
                                         {post.categoryName && <span className="post-category">{post.categoryName}</span>}
                                         <button type="button" className="post-link" onClick={() => onViewDetail(post.id)}>
                                             Đọc bài viết
+                                            <ArrowRight size={16} />
                                         </button>
                                     </div>
                                 </article>

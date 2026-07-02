@@ -3,6 +3,7 @@ import HeroBanner from '../../components/public/home/HeroBanner';
 import CategoryGrid from '../../components/public/home/CategoryGrid';
 import FeaturedProducts from '../../components/public/home/FeaturedProducts';
 import LatestProducts from '../../components/public/home/LatestProducts';
+import HotProducts from '../../components/public/home/HotProducts';
 import PostList from '../../components/public/news/PostList';
 import useProductCategories from '../../hooks/useProductCategories';
 import useProducts from '../../hooks/useProducts';
@@ -13,6 +14,16 @@ const HomePage = ({ selectedCategoryId, onSelectCategory, onNavigate, onViewProd
     const productCategories = useProductCategories();
     const featuredProducts = useProducts({ categoryId: selectedCategoryId, limit: 8 });
     const latestPosts = usePosts({ limit: 3 });
+
+    const handleSelectCategory = (categoryId) => {
+        onSelectCategory(categoryId);
+        window.requestAnimationFrame(() => {
+            document.getElementById('featured-products')?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    };
 
     return (
         <>
@@ -30,7 +41,7 @@ const HomePage = ({ selectedCategoryId, onSelectCategory, onNavigate, onViewProd
                     categories={productCategories.categories}
                     loading={productCategories.loading}
                     selectedCategoryId={selectedCategoryId}
-                    onSelectCategory={onSelectCategory}
+                    onSelectCategory={handleSelectCategory}
                 />
 
                 <FeaturedProducts
@@ -40,11 +51,19 @@ const HomePage = ({ selectedCategoryId, onSelectCategory, onNavigate, onViewProd
                     intro="8 mẫu kính mới và đáng chú ý trong cửa hàng."
                     onViewDetail={onViewProduct}
                     onBuyNow={onBuyNow}
+                    sectionId="featured-products"
                 />
 
                 <LatestProducts
                     onViewDetail={onViewProduct}
                     onBuyNow={onBuyNow}
+                    sectionId="latest-products"
+                />
+
+                <HotProducts
+                    onViewDetail={onViewProduct}
+                    onBuyNow={onBuyNow}
+                    sectionId="hot-products"
                 />
 
                 <PostList

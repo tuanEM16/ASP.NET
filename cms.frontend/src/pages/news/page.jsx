@@ -11,9 +11,11 @@ const NewsPage = ({ selectedCategoryId, onSelectCategory, onViewPost }) => {
     return (
         <div className="container page-section">
             <div className="page-title">
-                <p className="section-kicker">Blog</p>
-                <h1>Bài viết mới nhất</h1>
-                <span>Lọc theo danh mục để xem đúng nhóm bài viết bạn cần.</span>
+                <div>
+                    <p className="section-kicker">Blog</p>
+                    <h1>Bài viết mới nhất</h1>
+                    <span>Xu hướng, kiến thức và hướng dẫn chọn kính phù hợp.</span>
+                </div>
             </div>
             <BlogCategoryList
                 categories={blogCategories.categories}

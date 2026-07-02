@@ -65,4 +65,46 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+    <script>
+        class ProductUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file.then(file => {
+                    const data = new FormData();
+                    data.append('upload', file);
+
+                    return fetch('@Url.Action("UploadDescriptionImage", "Product")', {
+                        method: 'POST',
+                        body: data
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Không thể tải ảnh lên.');
+                            }
+
+                            return response.json();
+                        })
+                        .then(result => ({ default: result.url }));
+                });
+            }
+
+            abort() { }
+        }
+
+        function productUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter =
+                loader => new ProductUploadAdapter(loader);
+        }
+
+        ClassicEditor
+            .create(document.querySelector('#Description'), {
+                extraPlugins: [productUploadAdapterPlugin]
+            })
+            .catch(error => console.error(error));
+    </script>
 }

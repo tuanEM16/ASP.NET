@@ -3,4 +3,9 @@ bin/
 obj/
 node_modules/
 *.log
+~$*.docx
 cms.frontend/build/
+CMS.Backend/wwwroot/order-emails/
+CMS.Backend/wwwroot/password-reset-emails/
+CMS.Backend/wwwroot/uploads/*
+!CMS.Backend/wwwroot/uploads/.gitkeep

@@ -6,6 +6,10 @@ jest.mock('./services/productService', () => ({
   default: {
     getAllProducts: jest.fn(() => Promise.resolve([])),
     getLatestProducts: jest.fn(() => Promise.resolve([])),
+    getHotProducts: jest.fn(() => Promise.resolve([])),
+    getPriceRange: jest.fn(() => Promise.resolve({ minPrice: 0, maxPrice: 0 })),
+    searchProducts: jest.fn(() => Promise.resolve([])),
+    filterProducts: jest.fn(() => Promise.resolve([])),
     getProductById: jest.fn(() => Promise.resolve(null))
   }
 }));

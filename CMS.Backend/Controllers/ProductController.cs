@@ -146,6 +146,18 @@ namespace CMS.Backend.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public IActionResult UploadDescriptionImage(IFormFile upload)
+        {
+            if (upload == null || upload.Length == 0)
+            {
+                return BadRequest(new { error = new { message = "Vui lòng chọn hình ảnh để tải lên." } });
+            }
+
+            var imageUrl = SaveUploadedImage(upload);
+            return Json(new { url = imageUrl });
+        }
+
         private void LoadCategoryList(int? selectedId = null)
         {
             ViewBag.CategoryProductList = new SelectList(

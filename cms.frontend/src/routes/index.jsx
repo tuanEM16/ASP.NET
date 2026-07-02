@@ -4,6 +4,8 @@ export const pageKeys = {
     news: 'news',
     contact: 'contact',
     register: 'register',
+    forgotPassword: 'forgot-password',
+    resetPassword: 'reset-password',
     cart: 'cart',
     postDetail: 'post-detail',
     productDetail: 'product-detail'

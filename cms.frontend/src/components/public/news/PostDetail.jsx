@@ -1,6 +1,7 @@
 import React from 'react';
+import { ArrowLeft, CalendarDays } from 'lucide-react';
 import { formatDate } from '../../../utils/formatters';
-import { getImageUrl } from '../../../utils/images';
+import { getContentHtml, getImageUrl } from '../../../utils/images';
 
 const PostDetail = ({ post, loading, error, onBack }) => {
     if (loading) {
@@ -17,10 +18,13 @@ const PostDetail = ({ post, loading, error, onBack }) => {
     }
 
     const imageUrl = getImageUrl(post.imageUrl);
+    const contentHtml = getContentHtml(post.content)
+        || 'Nội dung bài viết đang được cập nhật.';
 
     return (
         <article className="container detail-page">
-            <button type="button" className="btn btn-outline-secondary mb-4" onClick={onBack}>
+            <button type="button" className="back-button" onClick={onBack}>
+                <ArrowLeft size={18} />
                 Quay lại tin tức
             </button>
 
@@ -29,10 +33,10 @@ const PostDetail = ({ post, loading, error, onBack }) => {
                 <div className="detail-body">
                     <p className="section-kicker">Bài viết</p>
                     <h1>{post.title}</h1>
-                    <p className="detail-meta">Ngày đăng: {formatDate(post.createdDate)}</p>
+                    <p className="detail-meta"><CalendarDays size={17} />Ngày đăng: {formatDate(post.createdDate)}</p>
                     <div
                         className="detail-content"
-                        dangerouslySetInnerHTML={{ __html: post.content || 'Nội dung bài viết đang được cập nhật.' }}
+                        dangerouslySetInnerHTML={{ __html: contentHtml }}
                     />
                 </div>
             </div>

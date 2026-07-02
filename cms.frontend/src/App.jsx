@@ -7,6 +7,8 @@ import ProductPage from './pages/products/page';
 import NewsPage from './pages/news/page';
 import ContactPage from './pages/contact/page';
 import RegisterPage from './pages/register/page';
+import ForgotPasswordPage from './pages/forgot-password/page';
+import ResetPasswordPage from './pages/reset-password/page';
 import PostDetailPage from './pages/news/[id]/page';
 import ProductDetailPage from './pages/products/[id]/page';
 import CartPage from './pages/cart/page';
@@ -18,6 +20,7 @@ import useCart from './hooks/useCart';
 function App() {
     const [selectedProductCategoryId, setSelectedProductCategoryId] = React.useState(null);
     const [selectedBlogCategoryId, setSelectedBlogCategoryId] = React.useState(null);
+    const [searchKeyword, setSearchKeyword] = React.useState('');
     const cart = useCart();
     const {
         currentPage,
@@ -28,10 +31,22 @@ function App() {
         showProductDetail
     } = usePageNavigation();
 
-    const addProductToCart = (product) => {
-        cart.addToCart(product);
+    const addProductToCart = (product, quantity = 1) => {
+        cart.addToCart(product, quantity);
         goToPage(pageKeys.cart);
     };
+
+    const handleSearch = React.useCallback((keyword) => {
+        const normalizedKeyword = keyword.trim();
+        setSearchKeyword(normalizedKeyword);
+
+        if (!normalizedKeyword) {
+            return;
+        }
+
+        setSelectedProductCategoryId(null);
+        goToPage(pageKeys.products);
+    }, [goToPage]);
 
     const renderPage = () => {
         
@@ -53,6 +68,8 @@ function App() {
                 <ProductPage
                     selectedCategoryId={selectedProductCategoryId}
                     onSelectCategory={setSelectedProductCategoryId}
+                    searchKeyword={searchKeyword}
+                    onClearSearch={() => setSearchKeyword('')}
                     onViewProduct={showProductDetail}
                     onBuyNow={addProductToCart}
                 />
@@ -74,7 +91,15 @@ function App() {
         }
 
         if (currentPage === pageKeys.register) {
-            return <RegisterPage />;
+            return <RegisterPage onForgotPassword={() => goToPage(pageKeys.forgotPassword)} />;
+        }
+
+        if (currentPage === pageKeys.forgotPassword) {
+            return <ForgotPasswordPage onBack={() => goToPage(pageKeys.register)} />;
+        }
+
+        if (currentPage === pageKeys.resetPassword) {
+            return <ResetPasswordPage onNavigateHome={() => goToPage(pageKeys.home)} />;
         }
 
         if (currentPage === pageKeys.cart) {
@@ -104,7 +129,12 @@ function App() {
     };
 
     return (
-        <MainLayout currentPage={currentPage} cartCount={cart.totalQuantity} onNavigate={goToPage}>
+        <MainLayout
+            currentPage={currentPage}
+            cartCount={cart.totalQuantity}
+            onNavigate={goToPage}
+            onSearch={handleSearch}
+        >
             {renderPage()}
         </MainLayout>
     );

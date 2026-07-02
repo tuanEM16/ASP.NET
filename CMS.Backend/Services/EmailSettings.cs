@@ -9,5 +9,6 @@ namespace CMS.Backend.Services
         public string FromEmail { get; set; } = "noreply@eyestyle.local";
         public string FromName { get; set; } = "EyeStyle.Store";
         public bool EnableSsl { get; set; } = true;
+        public string FrontendBaseUrl { get; set; } = "http://localhost:3000";
     }
 }
