@@ -1,13 +1,17 @@
 import React from 'react';
 import { ArrowRight, ShoppingBag } from 'lucide-react';
 import { getImageUrl } from '../../../utils/images';
+import { createSummary } from '../../../utils/text';
 
 const buildSlides = ({ brand, products, posts }) => {
     const productSlides = products.slice(0, 3).map((product) => ({
         id: `product-${product.id}`,
         type: 'product',
         title: product.name,
-        description: product.description || 'Mẫu kính mắt thời trang đang có sẵn tại cửa hàng.',
+        description: createSummary(
+            product.description,
+            'Mẫu kính mắt thời trang đang có sẵn tại cửa hàng.'
+        ),
         imageUrl: getImageUrl(product.imageUrl),
         targetId: product.id
     }));

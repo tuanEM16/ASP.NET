@@ -29,7 +29,7 @@
             </div>
             <div class="col-md-8">
                 <h4 class="fw-bold">@Model.Name</h4>
-                <p class="text-muted">@Model.Description</p>
+                <div class="text-muted mb-3">@Html.Raw(Model.Description)</div>
                 <dl class="row">
                     <dt class="col-sm-4">Danh mục</dt>
                     <dd class="col-sm-8">@(categoryName ?? "Chưa phân loại")</dd>
