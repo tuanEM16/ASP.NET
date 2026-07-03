@@ -1,3 +1,5 @@
+-- Run with UTF-8 input:
+-- sqlcmd -S localhost -d EmCMS_DB -E -C -b -f 65001 -i database\UpdateEyewearCatalog.sql
 SET XACT_ABORT ON;
 BEGIN TRANSACTION;
 
@@ -99,6 +101,38 @@ SET
     END
 WHERE Id BETWEEN 4 AND 13;
 
+SET IDENTITY_INSERT Products ON;
+
+MERGE Products AS target
+USING
+(
+    VALUES
+        (14, N'Rose Gold Aviator', N'<p>Kính phi công màu vàng hồng mang vẻ thanh lịch và hiện đại.</p><ul><li>Tròng hồng nhạt chống UV400</li><li>Gọng kim loại nhẹ</li><li>Đệm mũi silicon êm</li></ul>', CAST(1750000 AS decimal(18,2)), 20, N'/images/eyewear/rose-aviator.jpg', 6),
+        (15, N'Cocoa Square Polarized', N'<p>Kính vuông màu nâu dễ phối đồ, phù hợp sử dụng hằng ngày.</p><ul><li>Tròng polarized giảm chói</li><li>Gọng acetate chắc chắn</li><li>Phong cách nam tính</li></ul>', CAST(1290000 AS decimal(18,2)), 26, N'/images/eyewear/cocoa-square.jpg', 5),
+        (16, N'Blush Round Crystal', N'<p>Gọng tròn trong suốt màu hồng nhẹ dành cho phong cách trẻ trung.</p><ul><li>Có thể lắp tròng cận</li><li>Gọng nhẹ, đeo thoải mái</li><li>Phù hợp khuôn mặt vuông</li></ul>', CAST(1190000 AS decimal(18,2)), 21, N'/images/eyewear/blush-round.jpg', 6),
+        (17, N'Amber Classic Unisex', N'<p>Mẫu kính màu hổ phách cổ điển dành cho cả nam và nữ.</p><ul><li>Tròng nâu chống chói</li><li>Gọng bền màu</li><li>Kèm hộp bảo vệ</li></ul>', CAST(1350000 AS decimal(18,2)), 19, N'/images/eyewear/amber-classic.jpg', 17),
+        (18, N'Noir Optical Essential', N'<p>Gọng kính đen tối giản phù hợp học tập, làm việc và sử dụng hằng ngày.</p><ul><li>Lắp được nhiều loại tròng cận</li><li>Bản lề chắc chắn</li><li>Thiết kế unisex</li></ul>', CAST(950000 AS decimal(18,2)), 30, N'/images/eyewear/noir-optical.jpg', 7),
+        (19, N'Tortoise Luxe Edition', N'<p>Kính vân đồi mồi cao cấp với đường nét thanh lịch và sắc tròng ấm.</p><ul><li>Tròng chống UV400</li><li>Gọng acetate hoàn thiện bóng</li><li>Phong cách cổ điển</li></ul>', CAST(1690000 AS decimal(18,2)), 15, N'/images/eyewear/tortoise-luxe.jpg', 17),
+        (20, N'Azure Pro Aviator', N'<p>Kính phi công tròng xanh dành cho hoạt động ngoài trời và lái xe.</p><ul><li>Tròng polarized</li><li>Giảm phản xạ bề mặt</li><li>Gọng kim loại chống gỉ</li></ul>', CAST(1990000 AS decimal(18,2)), 13, N'/images/eyewear/azure-aviator.jpg', 13),
+        (21, N'Shadow Square UV400', N'<p>Kính râm vuông màu đen tạo phong cách mạnh mẽ và hiện đại.</p><ul><li>Chống tia UV400</li><li>Tròng tối màu dịu mắt</li><li>Gọng ôm vừa khuôn mặt</li></ul>', CAST(1490000 AS decimal(18,2)), 23, N'/images/eyewear/shadow-square.jpg', 5),
+        (22, N'Edge Angular Fashion', N'<p>Kính góc cạnh thời trang tạo điểm nhấn cho trang phục hiện đại.</p><ul><li>Tròng chống UV</li><li>Gọng acetate nhẹ</li><li>Thiết kế cá tính</li></ul>', CAST(1590000 AS decimal(18,2)), 17, N'/images/eyewear/edge-angular.jpg', 6),
+        (23, N'Scarlet Flex Junior', N'<p>Gọng kính đỏ dẻo nhẹ dành cho trẻ em học tập và vui chơi.</p><ul><li>Bo cạnh an toàn</li><li>Càng kính linh hoạt</li><li>Có thể lắp tròng cận</li></ul>', CAST(650000 AS decimal(18,2)), 28, N'/images/eyewear/scarlet-frame.jpg', 8)
+) AS source (Id, Name, Description, Price, StockQuantity, ImageUrl, CategoryProductId)
+ON target.Id = source.Id
+WHEN MATCHED THEN
+    UPDATE SET
+        Name = source.Name,
+        Description = source.Description,
+        Price = source.Price,
+        StockQuantity = source.StockQuantity,
+        ImageUrl = source.ImageUrl,
+        CategoryProductId = source.CategoryProductId
+WHEN NOT MATCHED THEN
+    INSERT (Id, Name, Description, Price, StockQuantity, ImageUrl, CategoryProductId)
+    VALUES (source.Id, source.Name, source.Description, source.Price, source.StockQuantity, source.ImageUrl, source.CategoryProductId);
+
+SET IDENTITY_INSERT Products OFF;
+
 UPDATE Categories
 SET
     Name = CASE Id
@@ -136,7 +170,7 @@ SET
         WHEN 16 THEN N'<h2>Cơ chế đổi màu</h2><p>Tròng photochromic chứa phân tử nhạy sáng. Khi tiếp xúc tia UV, các phân tử thay đổi cấu trúc làm tròng tối màu; khi vào trong nhà, tròng dần trở lại trong suốt.</p><p>Thời gian chuyển màu phụ thuộc nhiệt độ và cường độ tia UV.</p>'
     END,
     ImageUrl = CASE Id
-        WHEN 10 THEN N'/images/eyewear/urban-clear.jpg'
+        WHEN 10 THEN N'/images/eyewear/silver-retro.jpg'
         WHEN 11 THEN N'/images/eyewear/aero-black.jpg'
         WHEN 12 THEN N'/images/eyewear/classic-rimless.jpg'
         WHEN 13 THEN N'/images/eyewear/luna-cat-eye.jpg'
