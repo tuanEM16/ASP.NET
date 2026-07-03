@@ -54,24 +54,6 @@ File `.gitignore` da loai bo cac thu muc va file rac khi commit:
 - `cms.frontend/build/`
 - `*.log`
 
-## Doi Chieu Ket Qua Cham 30 Tieu Chi Dau
-
-Bang diem ngay 03/07/2026 ghi nhan `40.5/60` diem cho 30 tieu chi dau.
-Day khong phai 40.5 diem tren phan da cham; 20 tieu chi con lai chua duoc cham
-nen tong hien thi cua ca bang van la `40.5/100`.
-
-Phien ban hien tai da bo sung cac noi dung tung bi tru diem nhu bao cao 6 chuong,
-so do quan he, danh muc API/JSON, HeroBanner tu dong chuyen slide, phan trang,
-CKEditor va luong POST dat hang co transaction tru ton kho.
-
-Chi tiet diem cu, trang thai khac phuc va cach mo minh chung:
-
-- [`docs/DOI-CHIEU-30-TIEU-CHI.md`](docs/DOI-CHIEU-30-TIEU-CHI.md)
-- Bao cao: [`docs/ASP-LuuCongTuanEm-2123110139-CCQ2311D.docx`](docs/ASP-LuuCongTuanEm-2123110139-CCQ2311D.docx)
-
-Truoc khi nop bao cao chinh thuc, can tu them trang bia theo mau cua truong va
-chen anh chup ket qua goi API bang Postman vao muc kiem thu.
-
 ## Minh Chung Tieu Chi 37-46
 
 ### 37. San pham Hot / Ban chay
