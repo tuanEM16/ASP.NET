@@ -47,17 +47,17 @@ namespace CMS.Backend.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Product model, IFormFile uploadImage)
+        public IActionResult Create(Product model, IFormFile? uploadImage)
         {
-            if (uploadImage != null && uploadImage.Length > 0)
-            {
-                model.ImageUrl = SaveUploadedImage(uploadImage);
-            }
-
             if (!ModelState.IsValid)
             {
                 LoadCategoryList(model.CategoryProductId);
                 return View(model);
+            }
+
+            if (uploadImage is { Length: > 0 })
+            {
+                model.ImageUrl = SaveUploadedImage(uploadImage);
             }
 
             _context.Products.Add(model);
@@ -81,28 +81,32 @@ namespace CMS.Backend.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Product model, IFormFile uploadImage)
+        public IActionResult Edit(Product model, IFormFile? uploadImage)
         {
-            if (uploadImage != null && uploadImage.Length > 0)
+            var product = _context.Products.FirstOrDefault(p => p.Id == model.Id);
+            if (product == null)
             {
-                model.ImageUrl = SaveUploadedImage(uploadImage);
-            }
-            else
-            {
-                var oldProduct = _context.Products.AsNoTracking().FirstOrDefault(p => p.Id == model.Id);
-                if (oldProduct != null)
-                {
-                    model.ImageUrl = oldProduct.ImageUrl;
-                }
+                return NotFound();
             }
 
             if (!ModelState.IsValid)
             {
+                model.ImageUrl = product.ImageUrl;
                 LoadCategoryList(model.CategoryProductId);
                 return View(model);
             }
 
-            _context.Products.Update(model);
+            product.Name = model.Name;
+            product.Description = model.Description;
+            product.Price = model.Price;
+            product.StockQuantity = model.StockQuantity;
+            product.CategoryProductId = model.CategoryProductId;
+
+            if (uploadImage is { Length: > 0 })
+            {
+                product.ImageUrl = SaveUploadedImage(uploadImage);
+            }
+
             _context.SaveChanges();
             TempData["Success"] = "Đã cập nhật sản phẩm.";
             return RedirectToAction("Index");
