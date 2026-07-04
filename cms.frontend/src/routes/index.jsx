@@ -3,6 +3,7 @@ export const pageKeys = {
     products: 'products',
     news: 'news',
     contact: 'contact',
+    login: 'login',
     register: 'register',
     forgotPassword: 'forgot-password',
     resetPassword: 'reset-password',
@@ -16,5 +17,6 @@ export const navItems = [
     { key: pageKeys.products, label: 'Sản phẩm' },
     { key: pageKeys.news, label: 'Tin tức' },
     { key: pageKeys.contact, label: 'Liên hệ' },
+    { key: pageKeys.login, label: 'Đăng nhập' },
     { key: pageKeys.register, label: 'Đăng ký' }
 ];

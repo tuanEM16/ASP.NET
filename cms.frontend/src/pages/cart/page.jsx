@@ -20,11 +20,33 @@ const initialCheckoutForm = {
     notes: ''
 };
 
-const CartPage = ({ cart, onNavigateProducts }) => {
-    const [form, setForm] = React.useState(initialCheckoutForm);
+const createCheckoutForm = (customer) => ({
+    ...initialCheckoutForm,
+    fullName: customer?.fullName || '',
+    phone: customer?.phone || '',
+    address: customer?.address || '',
+    email: customer?.email || ''
+});
+
+const CartPage = ({ cart, customer, onNavigateProducts }) => {
+    const [form, setForm] = React.useState(() => createCheckoutForm(customer));
     const [submitting, setSubmitting] = React.useState(false);
     const [message, setMessage] = React.useState(null);
     const [orderId, setOrderId] = React.useState(null);
+
+    React.useEffect(() => {
+        if (!customer) {
+            return;
+        }
+
+        setForm((current) => ({
+            ...current,
+            fullName: current.fullName || customer.fullName || '',
+            phone: current.phone || customer.phone || '',
+            address: current.address || customer.address || '',
+            email: current.email || customer.email || ''
+        }));
+    }, [customer]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -55,7 +77,7 @@ const CartPage = ({ cart, onNavigateProducts }) => {
             });
 
             cart.clearCart();
-            setForm(initialCheckoutForm);
+            setForm(createCheckoutForm(customer));
             setOrderId(response.orderId);
             setMessage({
                 type: 'success',

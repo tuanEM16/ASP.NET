@@ -10,7 +10,7 @@ const initialForm = {
     confirmPassword: ''
 };
 
-const RegisterPage = ({ onForgotPassword }) => {
+const RegisterPage = ({ onLogin, onForgotPassword }) => {
     const [form, setForm] = React.useState(initialForm);
     const [message, setMessage] = React.useState(null);
     const [submitting, setSubmitting] = React.useState(false);
@@ -100,6 +100,9 @@ const RegisterPage = ({ onForgotPassword }) => {
                 </button>
                 <button type="button" className="btn btn-link w-100 mt-2" onClick={onForgotPassword}>
                     Quên mật khẩu?
+                </button>
+                <button type="button" className="btn btn-link w-100" onClick={onLogin}>
+                    Đã có tài khoản? Đăng nhập
                 </button>
             </form>
         </section>

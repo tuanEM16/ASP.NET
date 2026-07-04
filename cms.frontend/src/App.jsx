@@ -6,6 +6,7 @@ import HomePage from './pages/home/page';
 import ProductPage from './pages/products/page';
 import NewsPage from './pages/news/page';
 import ContactPage from './pages/contact/page';
+import LoginPage from './pages/login/page';
 import RegisterPage from './pages/register/page';
 import ForgotPasswordPage from './pages/forgot-password/page';
 import ResetPasswordPage from './pages/reset-password/page';
@@ -16,12 +17,14 @@ import NotFoundPage from './pages/not-found/page';
 import { pageKeys } from './routes';
 import usePageNavigation from './hooks/usePageNavigation';
 import useCart from './hooks/useCart';
+import useCustomerAuth from './hooks/useCustomerAuth';
 
 function App() {
     const [selectedProductCategoryId, setSelectedProductCategoryId] = React.useState(null);
     const [selectedBlogCategoryId, setSelectedBlogCategoryId] = React.useState(null);
     const [searchKeyword, setSearchKeyword] = React.useState('');
     const cart = useCart();
+    const customerAuth = useCustomerAuth();
     const {
         currentPage,
         selectedPostId,
@@ -90,12 +93,30 @@ function App() {
             return <ContactPage />;
         }
 
+        if (currentPage === pageKeys.login) {
+            return (
+                <LoginPage
+                    onLogin={(customer) => {
+                        customerAuth.signIn(customer);
+                        goToPage(pageKeys.home);
+                    }}
+                    onRegister={() => goToPage(pageKeys.register)}
+                    onForgotPassword={() => goToPage(pageKeys.forgotPassword)}
+                />
+            );
+        }
+
         if (currentPage === pageKeys.register) {
-            return <RegisterPage onForgotPassword={() => goToPage(pageKeys.forgotPassword)} />;
+            return (
+                <RegisterPage
+                    onLogin={() => goToPage(pageKeys.login)}
+                    onForgotPassword={() => goToPage(pageKeys.forgotPassword)}
+                />
+            );
         }
 
         if (currentPage === pageKeys.forgotPassword) {
-            return <ForgotPasswordPage onBack={() => goToPage(pageKeys.register)} />;
+            return <ForgotPasswordPage onBack={() => goToPage(pageKeys.login)} />;
         }
 
         if (currentPage === pageKeys.resetPassword) {
@@ -106,6 +127,7 @@ function App() {
             return (
                 <CartPage
                     cart={cart}
+                    customer={customerAuth.customer}
                     onNavigateProducts={() => goToPage(pageKeys.products)}
                 />
             );
@@ -132,8 +154,13 @@ function App() {
         <MainLayout
             currentPage={currentPage}
             cartCount={cart.totalQuantity}
+            customer={customerAuth.customer}
             onNavigate={goToPage}
             onSearch={handleSearch}
+            onLogout={() => {
+                customerAuth.signOut();
+                goToPage(pageKeys.home);
+            }}
         >
             {renderPage()}
         </MainLayout>

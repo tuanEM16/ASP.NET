@@ -239,6 +239,20 @@ textarea.form-control {
     position: relative;
 }
 
+.customer-nav-label {
+    max-width: 150px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 8px;
+    overflow: hidden;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .cart-badge {
     min-width: 20px;
     height: 20px;
@@ -1424,6 +1438,21 @@ article.detail-page .detail-body {
     max-width: 620px;
 }
 
+.auth-links {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.auth-links .btn {
+    min-height: 36px;
+    padding-right: 0;
+    padding-left: 0;
+    font-size: 13px;
+}
+
 /* Footer */
 .site-footer {
     border-top: 1px solid #26364b;
@@ -1597,6 +1626,11 @@ article.detail-page .detail-body {
     .main-nav button {
         justify-content: center;
         padding: 8px;
+    }
+
+    .customer-nav-label {
+        max-width: none;
+        justify-content: center;
     }
 
     .main-nav button > svg {
@@ -1826,6 +1860,12 @@ article.detail-page .detail-body {
     .checkout-assurances {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .auth-links {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 0;
     }
 
     .order-success > div {

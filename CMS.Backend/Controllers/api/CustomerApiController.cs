@@ -106,6 +106,45 @@ namespace CMS.Backend.Controllers.Api
             });
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] CustomerLoginRequest request)
+        {
+            if (request == null
+                || string.IsNullOrWhiteSpace(request.Email)
+                || string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest(new { message = "Vui lòng nhập Email và mật khẩu." });
+            }
+
+            var normalizedEmail = request.Email.Trim().ToLower();
+            var customer = await _context.Customers
+                .FirstOrDefaultAsync(item => item.Email.ToLower() == normalizedEmail);
+
+            if (customer == null || !PasswordHasher.VerifyPassword(request.Password, customer.Password))
+            {
+                return Unauthorized(new { message = "Email hoặc mật khẩu không chính xác." });
+            }
+
+            if (!PasswordHasher.IsHashed(customer.Password))
+            {
+                customer.Password = PasswordHasher.HashPassword(request.Password);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(new
+            {
+                message = "Đăng nhập thành công.",
+                customer = new
+                {
+                    customer.Id,
+                    customer.FullName,
+                    customer.Email,
+                    customer.Phone,
+                    customer.Address
+                }
+            });
+        }
+
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
@@ -186,6 +225,12 @@ namespace CMS.Backend.Controllers.Api
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class CustomerLoginRequest
+    {
+        public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
 

@@ -6,6 +6,9 @@ import {
     Phone,
     Search,
     ShoppingBag,
+    LogIn,
+    LogOut,
+    UserRound,
     UserPlus,
     X
 } from 'lucide-react';
@@ -18,10 +21,11 @@ const navIcons = {
     products: ShoppingBag,
     news: Newspaper,
     contact: Phone,
+    login: LogIn,
     register: UserPlus
 };
 
-const Header = ({ currentPage, navItems, cartCount, onNavigate, onSearch }) => {
+const Header = ({ currentPage, navItems, cartCount, customer, onNavigate, onSearch, onLogout }) => {
     const [keyword, setKeyword] = React.useState('');
     const [menuOpen, setMenuOpen] = React.useState(false);
     const hasSearched = React.useRef(false);
@@ -84,7 +88,9 @@ const Header = ({ currentPage, navItems, cartCount, onNavigate, onSearch }) => {
                 </form>
 
                 <nav className={`main-nav ${menuOpen ? 'open' : ''}`} aria-label="Điều hướng chính">
-                    {navItems.map((item) => {
+                    {navItems
+                        .filter((item) => !customer || !['login', 'register'].includes(item.key))
+                        .map((item) => {
                         const Icon = navIcons[item.key];
 
                         return (
@@ -99,6 +105,18 @@ const Header = ({ currentPage, navItems, cartCount, onNavigate, onSearch }) => {
                             </button>
                         );
                     })}
+                    {customer && (
+                        <>
+                            <span className="customer-nav-label" title={customer.email}>
+                                <UserRound size={17} />
+                                {customer.fullName}
+                            </span>
+                            <button type="button" onClick={onLogout}>
+                                <LogOut size={17} />
+                                Đăng xuất
+                            </button>
+                        </>
+                    )}
                     <button
                         type="button"
                         className={`cart-nav-button ${currentPage === 'cart' ? 'active' : ''}`}

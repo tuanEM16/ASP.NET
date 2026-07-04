@@ -55,7 +55,7 @@ const ForgotPasswordPage = ({ onBack }) => {
                     {submitting ? 'Đang gửi...' : 'Gửi liên kết đặt lại mật khẩu'}
                 </button>
                 <button type="button" className="btn btn-link w-100 mt-2" onClick={onBack}>
-                    Quay lại đăng ký
+                    Quay lại đăng nhập
                 </button>
             </form>
         </section>
