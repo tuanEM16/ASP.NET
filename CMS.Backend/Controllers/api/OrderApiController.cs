@@ -15,12 +15,12 @@ namespace CMS.Backend.Controllers.Api
     public class OrderApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IEmailSender _emailSender;
+        private readonly IOrderEmailQueue _emailQueue;
 
-        public OrderApiController(ApplicationDbContext context, IEmailSender emailSender)
+        public OrderApiController(ApplicationDbContext context, IOrderEmailQueue emailQueue)
         {
             _context = context;
-            _emailSender = emailSender;
+            _emailQueue = emailQueue;
         }
 
         [HttpGet]
@@ -139,18 +139,24 @@ namespace CMS.Backend.Controllers.Api
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            try
+            foreach (var detail in orderDetails)
             {
-                foreach (var detail in orderDetails)
-                {
-                    detail.Product = products[detail.ProductId];
-                }
-
-                await _emailSender.SendOrderConfirmationAsync(order, customer, orderDetails);
+                detail.Product = products[detail.ProductId];
             }
-            catch
+
+            var emailQueued = _emailQueue.TryQueue(new OrderEmailWorkItem(
+                order,
+                customer,
+                orderDetails.ToList()));
+
+            if (!emailQueued)
             {
-                // Don hang da tao thanh cong; loi email khong duoc lam hong luong thanh toan.
+                return Ok(new
+                {
+                    message = "Đặt hàng thành công, nhưng email xác nhận đang tạm hoãn.",
+                    orderId = order.Id,
+                    totalAmount = order.TotalAmount
+                });
             }
 
             return Ok(new
