@@ -3,7 +3,22 @@ import { ArrowRight, ShoppingBag } from 'lucide-react';
 import { getImageUrl } from '../../../utils/images';
 import { createSummary } from '../../../utils/text';
 
-const buildSlides = ({ brand, products, posts }) => {
+const buildSlides = ({ brand, banners, products, posts }) => {
+    const bannerSlides = banners.map((banner) => ({
+        id: `banner-${banner.id}`,
+        type: 'banner',
+        title: banner.title,
+        description: banner.subtitle || 'Khám phá bộ sưu tập kính mắt mới tại EyeStyle.Store.',
+        imageUrl: getImageUrl(banner.imageUrl),
+        buttonText: banner.buttonText || 'Xem chi tiết',
+        targetType: banner.targetType || 'products',
+        targetValue: banner.targetValue
+    }));
+
+    if (bannerSlides.length > 0) {
+        return bannerSlides;
+    }
+
     const productSlides = products.slice(0, 3).map((product) => ({
         id: `product-${product.id}`,
         type: 'product',
@@ -39,8 +54,19 @@ const buildSlides = ({ brand, products, posts }) => {
     }];
 };
 
-const HeroBanner = ({ brand, products = [], posts = [], onNavigate, onViewProduct, onViewPost }) => {
-    const slides = React.useMemo(() => buildSlides({ brand, products, posts }), [brand, products, posts]);
+const HeroBanner = ({
+    brand,
+    banners = [],
+    products = [],
+    posts = [],
+    onNavigate,
+    onViewProduct,
+    onViewPost
+}) => {
+    const slides = React.useMemo(
+        () => buildSlides({ brand, banners, products, posts }),
+        [brand, banners, products, posts]
+    );
     const [activeIndex, setActiveIndex] = React.useState(0);
     const activeSlide = slides[activeIndex] || slides[0];
 
@@ -61,6 +87,27 @@ const HeroBanner = ({ brand, products = [], posts = [], onNavigate, onViewProduc
     }, [slides.length]);
 
     const handlePrimaryAction = () => {
+        if (activeSlide.type === 'banner') {
+            if (activeSlide.targetType === 'product' && Number(activeSlide.targetValue)) {
+                onViewProduct(Number(activeSlide.targetValue));
+                return;
+            }
+
+            if (activeSlide.targetType === 'post' && Number(activeSlide.targetValue)) {
+                onViewPost(Number(activeSlide.targetValue));
+                return;
+            }
+
+            if (activeSlide.targetType === 'url'
+                && /^https?:\/\//i.test(activeSlide.targetValue || '')) {
+                window.location.assign(activeSlide.targetValue);
+                return;
+            }
+
+            onNavigate(activeSlide.targetType || 'products');
+            return;
+        }
+
         if (activeSlide.type === 'product') {
             onViewProduct(activeSlide.targetId);
             return;
@@ -86,7 +133,8 @@ const HeroBanner = ({ brand, products = [], posts = [], onNavigate, onViewProduc
                     <p>{activeSlide.description}</p>
                     <div className="hero-actions">
                         <button type="button" className="btn btn-primary" onClick={handlePrimaryAction}>
-                            {activeSlide.type === 'post' ? 'Đọc bài viết' : 'Xem chi tiết'}
+                            {activeSlide.buttonText
+                                || (activeSlide.type === 'post' ? 'Đọc bài viết' : 'Xem chi tiết')}
                             <ArrowRight size={18} />
                         </button>
                         <button type="button" className="btn btn-outline-dark" onClick={() => onNavigate('products')}>

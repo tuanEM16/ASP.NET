@@ -1,0 +1,90 @@
+@model IEnumerable<CMS.Data.Entities.Banner>
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Quản lý Banner";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="text-primary mb-1">Quản lý Banner</h3>
+        <p class="text-muted mb-0">Điều khiển các slide hiển thị trên HeroBanner của trang chủ.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Thêm banner
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center">Chưa có banner nào.</div>
+}
+else
+{
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered table-hover align-middle bg-white mb-0">
+            <thead class="table-light text-center">
+                <tr>
+                    <th style="width: 70px;">Thứ tự</th>
+                    <th style="width: 210px;">Hình ảnh</th>
+                    <th>Nội dung</th>
+                    <th style="width: 150px;">Đích đến</th>
+                    <th style="width: 110px;">Trạng thái</th>
+                    <th style="width: 220px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center fw-bold">@item.DisplayOrder</td>
+                        <td>
+                            <img src="@item.ImageUrl" alt="@item.Title"
+                                 class="rounded border"
+                                 style="width: 190px; height: 90px; object-fit: cover;" />
+                        </td>
+                        <td>
+                            <div class="fw-bold text-primary">@item.Title</div>
+                            <div class="small text-muted mt-1">@item.Subtitle</div>
+                            <div class="small mt-2"><strong>Nút:</strong> @item.ButtonText</div>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border">@item.TargetType</span>
+                            @if (!string.IsNullOrWhiteSpace(item.TargetValue))
+                            {
+                                <div class="small text-muted mt-1 text-break">@item.TargetValue</div>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary")">
+                                @(item.IsActive ? "Đang bật" : "Đã tắt")
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </a>
+                            <form asp-action="Toggle" asp-route-id="@item.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-warning btn-sm">
+                                    <i class="bi @(item.IsActive ? "bi-eye-slash" : "bi-eye")"></i>
+                                    @(item.IsActive ? "Tắt" : "Bật")
+                                </button>
+                            </form>
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('Bạn có chắc muốn xóa banner này?')">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

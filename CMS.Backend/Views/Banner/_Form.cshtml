@@ -1,0 +1,85 @@
+@model CMS.Data.Entities.Banner
+
+@{
+    var submitText = ViewData["SubmitText"]?.ToString() ?? "Lưu banner";
+    var submitClass = ViewData["SubmitClass"]?.ToString() ?? "btn-primary";
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label fw-bold">Tiêu đề</label>
+            <input asp-for="Title" class="form-control" maxlength="150" placeholder="Ví dụ: Bộ sưu tập kính râm mùa hè" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Subtitle" class="form-label fw-bold">Nội dung ngắn</label>
+            <textarea asp-for="Subtitle" class="form-control" rows="3" maxlength="500"
+                      placeholder="Mô tả ngắn hiển thị trên banner"></textarea>
+            <span asp-validation-for="Subtitle" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Hình ảnh banner</label>
+            @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+            {
+                <div class="mb-2">
+                    <img src="@Model.ImageUrl" alt="@Model.Title"
+                         class="img-fluid rounded border"
+                         style="width: 100%; max-height: 260px; object-fit: cover;" />
+                </div>
+            }
+            <input type="file" name="uploadImage" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/*" />
+            <div class="form-text">JPG, PNG hoặc WEBP; dung lượng tối đa 5 MB. Kích thước ngang khuyến nghị 1600 x 700 px.</div>
+            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="mb-3">
+            <label asp-for="ButtonText" class="form-label fw-bold">Chữ trên nút</label>
+            <input asp-for="ButtonText" class="form-control" maxlength="50" />
+            <span asp-validation-for="ButtonText" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TargetType" class="form-label fw-bold">Khi bấm nút</label>
+            <select asp-for="TargetType" class="form-select">
+                <option value="products">Mở trang sản phẩm</option>
+                <option value="product">Mở chi tiết sản phẩm</option>
+                <option value="news">Mở trang tin tức</option>
+                <option value="post">Mở chi tiết bài viết</option>
+                <option value="contact">Mở trang liên hệ</option>
+                <option value="url">Mở đường dẫn tùy chỉnh</option>
+            </select>
+            <span asp-validation-for="TargetType" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TargetValue" class="form-label fw-bold">ID hoặc đường dẫn</label>
+            <input asp-for="TargetValue" class="form-control" maxlength="500"
+                   placeholder="Nhập ID sản phẩm/bài viết hoặc https://..." />
+            <div class="form-text">Để trống khi chọn trang Sản phẩm, Tin tức hoặc Liên hệ.</div>
+            <span asp-validation-for="TargetValue" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="DisplayOrder" class="form-label fw-bold">Thứ tự hiển thị</label>
+            <input asp-for="DisplayOrder" class="form-control" type="number" min="0" />
+            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+        </div>
+
+        <div class="form-check form-switch mb-4">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label fw-bold">Đang hiển thị</label>
+        </div>
+
+        <button type="submit" class="btn @submitClass w-100 mb-2">
+            <i class="bi bi-check-circle"></i> @submitText
+        </button>
+        <a asp-action="Index" class="btn btn-secondary w-100">Quay lại</a>
+    </div>
+</div>

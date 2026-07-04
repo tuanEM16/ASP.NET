@@ -1,0 +1,27 @@
+@model CMS.Data.Entities.Banner
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewData["Title"] = "Thêm banner";
+    ViewData["SubmitText"] = "Lưu banner";
+    ViewData["SubmitClass"] = "btn-success";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="text-primary mb-1">Thêm banner</h3>
+        <p class="text-muted mb-0">Tạo slide mới cho khu vực nổi bật trên trang chủ.</p>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <partial name="_Form" model="Model" view-data="ViewData" />
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

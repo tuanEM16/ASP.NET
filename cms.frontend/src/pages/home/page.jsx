@@ -8,12 +8,14 @@ import PostList from '../../components/public/news/PostList';
 import useProductCategories from '../../hooks/useProductCategories';
 import useProducts from '../../hooks/useProducts';
 import usePosts from '../../hooks/usePosts';
+import useBanners from '../../hooks/useBanners';
 import { brand } from '../../config/theme';
 
 const HomePage = ({ selectedCategoryId, onSelectCategory, onNavigate, onViewProduct, onViewPost, onBuyNow }) => {
     const productCategories = useProductCategories();
     const featuredProducts = useProducts({ categoryId: selectedCategoryId, limit: 8 });
     const latestPosts = usePosts({ limit: 3 });
+    const banners = useBanners();
 
     const handleSelectCategory = (categoryId) => {
         onSelectCategory(categoryId);
@@ -29,6 +31,7 @@ const HomePage = ({ selectedCategoryId, onSelectCategory, onNavigate, onViewProd
         <>
             <HeroBanner
                 brand={brand}
+                banners={banners.banners}
                 products={featuredProducts.products}
                 posts={latestPosts.posts}
                 onNavigate={onNavigate}

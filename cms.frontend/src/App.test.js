@@ -31,6 +31,13 @@ jest.mock('./services/postService', () => ({
   }
 }));
 
+jest.mock('./services/bannerService', () => ({
+  __esModule: true,
+  default: {
+    getActiveBanners: jest.fn(() => Promise.resolve([]))
+  }
+}));
+
 test('renders EyeStyle Store home page', async () => {
   render(<App />);
   expect(screen.getAllByText(/EyeStyle\.Store/i).length).toBeGreaterThan(0);
