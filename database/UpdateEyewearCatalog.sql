@@ -196,3 +196,6 @@ SET
 WHERE Id IN (10, 11, 12, 13, 14, 16);
 
 COMMIT TRANSACTION;
+
+-- Cập nhật bài viết mẫu chi tiết sau khi chuẩn hóa dữ liệu:
+-- sqlcmd -S localhost -d EmCMS_DB -E -C -b -f 65001 -i database\UpdateFeaturedArticle.sql

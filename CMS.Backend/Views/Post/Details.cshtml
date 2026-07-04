@@ -1,7 +1,92 @@
 ﻿@model CMS.Data.Entities.Post
 @{
     Layout = "_LayoutAdmin";
+    ViewData["Title"] = Model.Title;
 }
+<style>
+    .post-content {
+        color: #334155;
+        line-height: 1.8;
+    }
+
+    .post-content .article-lead {
+        color: #24324a;
+        font-size: 1.15rem;
+    }
+
+    .post-content h2 {
+        margin: 2rem 0 .75rem;
+        color: #17233b;
+        font-size: 1.55rem;
+        font-weight: 700;
+    }
+
+    .post-content h3 {
+        margin: 1.5rem 0 .5rem;
+        color: #24324a;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .post-content blockquote {
+        margin: 1.5rem 0;
+        padding: 1rem 1.25rem;
+        border-left: 4px solid #0d6efd;
+        background: #f0f6ff;
+    }
+
+    .post-content blockquote p {
+        margin: 0;
+    }
+
+    .post-content figure {
+        margin: 1.75rem 0;
+    }
+
+    .post-content figure img {
+        width: 100%;
+        max-height: 460px;
+        border-radius: .375rem;
+        object-fit: cover;
+    }
+
+    .post-content figcaption {
+        margin-top: .5rem;
+        color: #64748b;
+        font-size: .875rem;
+        font-style: italic;
+        text-align: center;
+    }
+
+    .post-content table {
+        display: block;
+        width: 100%;
+        margin: 1.5rem 0;
+        overflow-x: auto;
+        border-collapse: collapse;
+        font-size: 1rem;
+    }
+
+    .post-content th,
+    .post-content td {
+        min-width: 180px;
+        padding: .75rem;
+        border: 1px solid #dee2e6;
+        vertical-align: top;
+    }
+
+    .post-content th {
+        background: #edf4fc;
+    }
+
+    .post-content .article-sources {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #dee2e6;
+        color: #64748b;
+        font-size: .9rem;
+    }
+</style>
 <div class="container mt-5">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -18,7 +103,7 @@
             <hr />
 
             <div class="text-center mb-4">
-                <img src="@Model.ImageUrl" class="img-fluid rounded shadow" alt="Post Image" style="width: 100%;">
+                <img src="@Model.ImageUrl" class="img-fluid rounded shadow" alt="@Model.Title" style="width: 100%;">
             </div>
 
             <div class="post-content fs-5 leading-lg">
